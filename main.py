@@ -11,9 +11,14 @@ def main(page: ft.Page):
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
     hunger_bar = ft.ProgressBar(value=0.5, width=200)
+    emotion_bar = ft.ProgressBar(value=0.5, width=200)
 
-    def feed(e):
+    def feed(event):
         hunger_bar.value = min(hunger_bar.value + 0.1, 1)
+        page.update()
+
+    def pet(event):
+        emotion_bar.value = min(emotion_bar.value + 0.1, 1)
         page.update()
 
     page.add(
@@ -25,7 +30,10 @@ def main(page: ft.Page):
         ),
         ft.Text("Hunger"),
         hunger_bar,
-        ft.Button("Feed", on_click=feed)
+        ft.Button("Feed", on_click=feed),
+        ft.Text("Emotions"),
+        emotion_bar,
+        ft.Button("Pet", on_click=pet)
     )
 
 ft.run(main, assets_dir="imgs")
