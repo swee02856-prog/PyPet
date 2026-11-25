@@ -10,6 +10,12 @@ def main(page: ft.Page):
     page.window.always_on_top = True
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
+    hunger_bar = ft.ProgressBar(value=0.5, width=200)
+
+    def feed(e):
+        hunger_bar.value = min(hunger_bar.value + 0.1, 1)
+        page.update()
+
     page.add(
         ft.Image(src="BleBotFrame1.png",
         width=250, 
@@ -18,11 +24,8 @@ def main(page: ft.Page):
         filter_quality=ft.FilterQuality.NONE
         ),
         ft.Text("Hunger"),
-        ft.ProgressBar(value=0.5, width=200),
-        ft.Text("Emotions"),
-        ft.ProgressBar(value=0.5, width=200),
-        ft.Text("Energy"),
-        ft.ProgressBar(value=0.5, width=200)
+        hunger_bar,
+        ft.Button("Feed", on_click=feed)
     )
 
 ft.run(main, assets_dir="imgs")
