@@ -1,11 +1,12 @@
 import flet as ft
+import asyncio
 
-def main(page: ft.Page):
+async def main(page: ft.Page):
     page.title = "BleBot"
     page.window.min_width = 300
     page.window.max_width = 300
-    page.window.min_height = 450
-    page.window.max_height = 450
+    page.window.min_height = 550
+    page.window.max_height = 550
     page.window.maximized = False
     page.window.always_on_top = True
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -14,10 +15,12 @@ def main(page: ft.Page):
     emotion_bar = ft.ProgressBar(value=0.5, width=200)
 
     def feed(event):
+        print(event)
         hunger_bar.value = min(hunger_bar.value + 0.1, 1)
         page.update()
 
     def pet(event):
+        print(event)
         emotion_bar.value = min(emotion_bar.value + 0.1, 1)
         page.update()
 
@@ -36,4 +39,9 @@ def main(page: ft.Page):
         ft.Button("Pet", on_click=pet)
     )
 
+    while True:
+        await asyncio.sleep(2)
+        hunger_bar.value = max(hunger_bar.value - 0.02, 0)
+        emotion_bar.value = max(emotion_bar.value - 0.01, 0)
+        page.update()
 ft.run(main, assets_dir="imgs")
