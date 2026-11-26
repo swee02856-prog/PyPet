@@ -36,7 +36,7 @@ async def main(page: ft.Page):
 
     def gain_exp():
         print("Gaining exp")
-        if current_age == ages[0]:
+        if current_age != ages[2]:
             if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
                 experience.bar.value = min(experience.bar.value + 0.1, 1)
                 print(f"Experience: {experience.bar.value}")
@@ -44,14 +44,14 @@ async def main(page: ft.Page):
 
     def level_up():
         nonlocal current_age
-        if experience.bar.value >= 1:
+        if experience.bar.value >= 0.95:
             print("Blebot leveled up")
             if current_age == ages[0]:
                 current_age = ages[1]
                 age_teen()
             elif current_age == ages[1]:
                 age_adult()
-                current_age = 2
+                current_age = ages[2]
             experience.bar.value = 0
 
     def age_baby():
