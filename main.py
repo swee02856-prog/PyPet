@@ -2,6 +2,8 @@ import flet as ft
 import asyncio
 
 async def main(page: ft.Page):
+    ages = ("baby", "teen", "adult")
+    current_age = ages[0]
     page.title = "BleBot"
     page.window.min_width = 300
     page.window.max_width = 300
@@ -11,37 +13,71 @@ async def main(page: ft.Page):
     page.window.always_on_top = True
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
 
-    hunger_bar = ft.ProgressBar(value=0.5, width=200)
-    emotion_bar = ft.ProgressBar(value=0.5, width=200)
+    class bar:
+        def __init__(self, name, value):
+            self.label = name
+            self.bar = ft.ProgressBar(value=value, width=200)
+
+    hunger = bar("Hunger", 0.5)
+    emotions = bar("Emotions", 0.5)
+    experience = bar("Experience", 0)
 
     def feed(event):
         print(event)
-        hunger_bar.value = min(hunger_bar.value + 0.1, 1)
+        hunger.bar.value = min(hunger.bar.value + 0.1, 1)
+        print(hunger.bar.value)
         page.update()
 
     def pet(event):
         print(event)
-        emotion_bar.value = min(emotion_bar.value + 0.1, 1)
+        emotions.bar.value = min(emotions.bar.value + 0.1, 1)
+        print(emotions.bar.value)
         page.update()
 
-    page.add(
-        ft.Image(src="BleBotFrame1.png",
-        width=250, 
-        height=250,
-        fit=ft.BoxFit.CONTAIN,
-        filter_quality=ft.FilterQuality.NONE
-        ),
-        ft.Text("Hunger"),
-        hunger_bar,
-        ft.Button("Feed", on_click=feed),
-        ft.Text("Emotions"),
-        emotion_bar,
-        ft.Button("Pet", on_click=pet)
-    )
+    def gain_exp():
+        print("Gaining exp")
+        if current_age == ages[0]:
+            if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
+                experience.bar.value = min(experience.bar.value + 0.1, 1)
+                page.update()
 
+    def age_baby():
+        blebot.width = 100
+        blebot.height = 100
+    def age_teen():
+        blebot.width = 180
+        blebot.height = 180
+    def age_adult():
+        blebot.width = 250
+        blebot.height = 250
+
+    blebot = ft.Image(
+            src="BleBotFrame1.png",
+            width=250, 
+            height=250,
+            fit=ft.BoxFit.CONTAIN,
+            filter_quality=ft.FilterQuality.NONE
+        )
+    page.add(
+        blebot,
+        ft.Text(hunger.label),
+        hunger.bar,
+        ft.Button("Feed", on_click=feed),
+        ft.Text(emotions.label),
+        emotions.bar,
+        ft.Button("Pet", on_click=pet),
+        experience.bar
+        )
+    if current_age == ages[0]:
+        age_baby()
+    if current_age == ages[1]:
+        age_teen()
+    if current_age == ages[2]:
+        age_adult()
     while True:
         await asyncio.sleep(2)
-        hunger_bar.value = max(hunger_bar.value - 0.02, 0)
-        emotion_bar.value = max(emotion_bar.value - 0.01, 0)
+        hunger.bar.value = max(hunger.bar.value - 0.02, 0)
+        emotions.bar.value = max(emotions.bar.value - 0.01, 0)
+        gain_exp()
         page.update()
 ft.run(main, assets_dir="imgs")
