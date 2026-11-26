@@ -25,13 +25,13 @@ async def main(page: ft.Page):
     def feed(event):
         print(event)
         hunger.bar.value = min(hunger.bar.value + 0.1, 1)
-        print(hunger.bar.value)
+        print(f"Hunger: {hunger.bar.value}")
         page.update()
 
     def pet(event):
         print(event)
         emotions.bar.value = min(emotions.bar.value + 0.1, 1)
-        print(emotions.bar.value)
+        print(f"Emotions: {emotions.bar.value}")
         page.update()
 
     def gain_exp():
@@ -39,7 +39,20 @@ async def main(page: ft.Page):
         if current_age == ages[0]:
             if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
                 experience.bar.value = min(experience.bar.value + 0.1, 1)
+                print(f"Experience: {experience.bar.value}")
                 page.update()
+
+    def level_up():
+        nonlocal current_age
+        if experience.bar.value >= 1:
+            print("Blebot leveled up")
+            if current_age == ages[0]:
+                current_age = ages[1]
+                age_teen()
+            elif current_age == ages[1]:
+                age_adult()
+                current_age = 2
+            experience.bar.value = 0
 
     def age_baby():
         blebot.width = 100
@@ -79,5 +92,6 @@ async def main(page: ft.Page):
         hunger.bar.value = max(hunger.bar.value - 0.02, 0)
         emotions.bar.value = max(emotions.bar.value - 0.01, 0)
         gain_exp()
+        level_up()
         page.update()
 ft.run(main, assets_dir="imgs")
