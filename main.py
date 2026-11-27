@@ -82,6 +82,7 @@ async def main(page: ft.Page):
                 age_adult()
                 current_age = ages[2]
             experience.bar.value = 0
+            currentageText.value = (current_age)
 
     def age_baby():
         blebot.width = 100
