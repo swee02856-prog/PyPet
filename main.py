@@ -2,7 +2,7 @@ import flet as ft
 import asyncio
 
 async def main(page: ft.Page):
-    ages = ("baby", "teen", "adult")
+    ages = ("BleBot-Baby", "BleBot-Teen", "BleBot-Adult")
     current_age = ages[0]
     sleeping = False
     def sleep(event):
@@ -15,6 +15,7 @@ async def main(page: ft.Page):
             sleepbutton.content = "Sleep"
             sleeping = False
         page.update()
+    currentageText = ft.Text(current_age)
     sleepbutton = ft.Button("Sleep", on_click=sleep)
     page.title = "BleBot"
     page.window.min_width = 300
@@ -89,6 +90,7 @@ async def main(page: ft.Page):
             filter_quality=ft.FilterQuality.NONE
         )
     page.add(
+        currentageText,
         blebot,
         ft.Text(hunger.label),
         hunger.bar,
