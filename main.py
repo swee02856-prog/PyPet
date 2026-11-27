@@ -1,4 +1,6 @@
 import flet as ft
+import math
+import time
 import asyncio
 
 async def main(page: ft.Page):
@@ -18,6 +20,8 @@ async def main(page: ft.Page):
     currentageText = ft.Text(current_age)
     sleepbutton = ft.Button("Sleep", on_click=sleep)
     page.title = "BleBot"
+    bob_height = 0.05
+    bob_speed = 3
     page.window.min_width = 300
     page.window.max_width = 300
     page.window.min_height = 550
@@ -35,6 +39,13 @@ async def main(page: ft.Page):
     emotions = bar("Emotions", 0.5)
     energy = bar("Energy", 0.5)
     experience = bar("Experience", 0)
+
+    async def bob():
+        while True:
+            offset_y = math.sin(time.time() * bob_speed) * bob_height
+            blebot.offset = ft.Offset(0, offset_y)
+            page.update()
+            await asyncio.sleep(0.03)
 
     def feed(event):
         print(event)
@@ -111,6 +122,7 @@ async def main(page: ft.Page):
     if current_age == ages[2]:
         age_adult()
     while True:
+        page.run_task(bob)
         await asyncio.sleep(2)
         hunger.bar.value = max(hunger.bar.value - 0.02, 0)
         emotions.bar.value = max(emotions.bar.value - 0.01, 0)
