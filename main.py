@@ -4,6 +4,18 @@ import asyncio
 async def main(page: ft.Page):
     ages = ("baby", "teen", "adult")
     current_age = ages[0]
+    sleeping = False
+    def sleep(event):
+        print("sleeping")
+        nonlocal sleeping
+        if sleeping == False:
+            sleepbutton.content = "Stop Sleeping"
+            sleeping = True
+        elif sleeping == True:
+            sleepbutton.content = "Sleep"
+            sleeping = False
+        page.update()
+    sleepbutton = ft.Button("Sleep", on_click=sleep)
     page.title = "BleBot"
     page.window.min_width = 300
     page.window.max_width = 300
@@ -20,6 +32,7 @@ async def main(page: ft.Page):
 
     hunger = bar("Hunger", 0.5)
     emotions = bar("Emotions", 0.5)
+    energy = bar("Energy", 0.5)
     experience = bar("Experience", 0)
 
     def feed(event):
@@ -37,8 +50,12 @@ async def main(page: ft.Page):
     def gain_exp():
         print("Gaining exp")
         if current_age != ages[2]:
-            if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
-                experience.bar.value = min(experience.bar.value + 0.1, 1)
+            if current_age == ages[0] and hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
+                experience.bar.value = min(experience.bar.value + 0.05, 1)
+                print(f"Experience: {experience.bar.value}")
+                page.update()
+            elif current_age == ages[1] and hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
+                experience.bar.value = min(experience.bar.value + 0.025, 1)
                 print(f"Experience: {experience.bar.value}")
                 page.update()
 
@@ -79,7 +96,11 @@ async def main(page: ft.Page):
         ft.Text(emotions.label),
         emotions.bar,
         ft.Button("Pet", on_click=pet),
-        experience.bar
+        ft.Text(energy.label),
+        energy.bar,
+        sleepbutton,
+        experience.bar,
+        ft.Text(experience.label)
         )
     if current_age == ages[0]:
         age_baby()
@@ -94,4 +115,8 @@ async def main(page: ft.Page):
         gain_exp()
         level_up()
         page.update()
+        if sleeping:
+            energy.bar.value = min(energy.bar.value + 0.02, 1)
+        else:
+            energy.bar.value = max(energy.bar.value - 0.005, 0)
 ft.run(main, assets_dir="imgs")
