@@ -12,9 +12,13 @@ async def main(page: ft.Page):
         nonlocal sleeping
         if sleeping == False:
             sleepbutton.content = "Stop Sleeping"
+            hunger_button.disabled = True
+            pet_button.disabled = True
             sleeping = True
         elif sleeping == True:
             sleepbutton.content = "Sleep"
+            hunger_button.disabled = False
+            pet_button.disabled = False
             sleeping = False
         page.update()
     currentageText = ft.Text(current_age)
@@ -22,6 +26,8 @@ async def main(page: ft.Page):
     page.title = "BleBot"
     bob_height = 0.05
     bob_speed = 3
+    hunger_multiplier = 1
+    emotions_multiplier = 1
     page.window.min_width = 300
     page.window.max_width = 300
     page.window.min_height = 550
@@ -59,6 +65,9 @@ async def main(page: ft.Page):
         print(f"Emotions: {emotions.bar.value}")
         page.update()
 
+    hunger_button = ft.Button("Feed", on_click=feed)
+    pet_button = ft.Button("Pet", on_click=pet)
+
     def gain_exp():
         print("Gaining exp")
         if current_age != ages[2]:
@@ -84,6 +93,15 @@ async def main(page: ft.Page):
             experience.bar.value = 0
             currentageText.value = (current_age)
 
+    def tiredness():
+        nonlocal hunger_multiplier, emotions_multiplier
+        if energy.bar.value <= 0.4:
+            hunger_multiplier = 3
+            emotions_multiplier = 3
+        else:
+            hunger_multiplier = 1
+            emotions_multiplier = 1
+
     def age_baby():
         blebot.width = 100
         blebot.height = 100
@@ -106,10 +124,10 @@ async def main(page: ft.Page):
         blebot,
         ft.Text(hunger.label),
         hunger.bar,
-        ft.Button("Feed", on_click=feed),
+        hunger_button,
         ft.Text(emotions.label),
         emotions.bar,
-        ft.Button("Pet", on_click=pet),
+        pet_button,
         ft.Text(energy.label),
         energy.bar,
         sleepbutton,
@@ -125,11 +143,12 @@ async def main(page: ft.Page):
     while True:
         page.run_task(bob)
         await asyncio.sleep(2)
-        hunger.bar.value = max(hunger.bar.value - 0.02, 0)
-        emotions.bar.value = max(emotions.bar.value - 0.01, 0)
+        hunger.bar.value = max(hunger.bar.value - (0.02 * hunger_multiplier), 0)
+        emotions.bar.value = max(emotions.bar.value - (0.01 * emotions_multiplier), 0)
         gain_exp()
         level_up()
         page.update()
+        tiredness()
         if sleeping:
             energy.bar.value = min(energy.bar.value + 0.02, 1)
         else:
