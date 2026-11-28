@@ -7,6 +7,7 @@ async def main(page: ft.Page):
     ages = ("BleBot-Baby", "BleBot-Teen", "BleBot-Adult")
     current_age = ages[0]
     sleeping = False
+    dead = False
     def sleep(event):
         print("sleeping")
         nonlocal sleeping
@@ -127,6 +128,10 @@ async def main(page: ft.Page):
             health.bar.value = min(health.bar.value + 0.01, 1)
         elif hunger.bar.value < 0.1 and emotions.bar.value < 0.1:
             health.bar.value = max(health.bar.value - 0.01, 0)
+
+    # def die():
+    #     if health.bar.value <= 0:
+    #         blebot.src = ""
     def gain_exp():
         print("Gaining exp")
         if current_age != ages[2]:
