@@ -105,6 +105,20 @@ async def main(page: ft.Page):
             emotions.bar.color = ft.Colors.RED
         else:
             emotions.bar.color = ft.Colors.GREEN
+
+        if health.bar.value < 0.5 and health.bar.value > 0.3:
+            health.bar.color = ft.Colors.ORANGE
+        elif health.bar.value <= 0.3:
+            health.bar.color = ft.Colors.RED
+        else:
+            health.bar.color = ft.Colors.GREEN
+
+        if energy.bar.value < 0.4 and energy.bar.value > 0.2:
+            energy.bar.color = ft.Colors.ORANGE
+        elif energy.bar.value <= 0.2:
+            energy.bar.color = ft.Colors.RED
+        else:
+            energy.bar.color = ft.Colors.GREEN
         page.update()
 
     def healthbar():
