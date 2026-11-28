@@ -20,7 +20,17 @@ async def main(page: ft.Page):
             hunger_button.disabled = False
             pet_button.disabled = False
             sleeping = False
+        current_blebot()
         page.update()
+    def current_blebot():
+        if sleeping:
+            blebot.src = "BleBotSleeping.png"
+        elif energy.bar.value <= 0.3:
+            blebot.src = "BleBotCrying.png"
+        elif hunger.bar.value <= 0.5 or emotions.bar.value <= 0.5:
+            blebot.src = "BleBotAngry.png"
+        else:
+            blebot.src = "BleBotFrame1.png"
     currentageText = ft.Text(current_age)
     sleepbutton = ft.Button("Sleep", on_click=sleep)
     page.title = "BleBot"
@@ -68,7 +78,6 @@ async def main(page: ft.Page):
 
     hunger_button = ft.Button("Feed", on_click=feed)
     pet_button = ft.Button("Pet", on_click=pet)
-
 
     def healthbar():
         if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
@@ -127,6 +136,7 @@ async def main(page: ft.Page):
             fit=ft.BoxFit.CONTAIN,
             filter_quality=ft.FilterQuality.NONE
         )
+    
     page.add(
         currentageText,
         blebot,
@@ -150,8 +160,8 @@ async def main(page: ft.Page):
         age_teen()
     if current_age == ages[2]:
         age_adult()
+    page.run_task(bob)
     while True:
-        page.run_task(bob)
         await asyncio.sleep(2)
         hunger.bar.value = max(hunger.bar.value - (0.02 * hunger_multiplier), 0)
         emotions.bar.value = max(emotions.bar.value - (0.01 * emotions_multiplier), 0)
@@ -160,6 +170,7 @@ async def main(page: ft.Page):
         page.update()
         tiredness()
         healthbar()
+        current_blebot()
         if sleeping:
             energy.bar.value = min(energy.bar.value + 0.02, 1)
         else:
