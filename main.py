@@ -20,6 +20,16 @@ async def main(page: ft.Page):
             hunger_button.disabled = False
             pet_button.disabled = False
             sleeping = False
+
+    def wake_up():
+        nonlocal sleeping
+        if sleeping == True:
+            if energy.bar.value >= 0.97:
+                sleeping = False
+                hunger_button.disabled = False
+                pet_button.disabled = False
+                sleepbutton.content = "Sleep"
+
         current_blebot()
         page.update()
     def current_blebot():
@@ -40,8 +50,8 @@ async def main(page: ft.Page):
     emotions_multiplier = 1
     page.window.min_width = 300
     page.window.max_width = 300
-    page.window.min_height = 550
-    page.window.max_height = 550
+    page.window.min_height = 650
+    page.window.max_height = 650
     page.window.maximized = False
     page.window.always_on_top = True
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
@@ -68,16 +78,34 @@ async def main(page: ft.Page):
         print(event)
         hunger.bar.value = min(hunger.bar.value + 0.1, 1)
         print(f"Hunger: {hunger.bar.value}")
+        highlight()
         page.update()
 
     def pet(event):
         print(event)
         emotions.bar.value = min(emotions.bar.value + 0.1, 1)
         print(f"Emotions: {emotions.bar.value}")
+        highlight()
         page.update()
 
     hunger_button = ft.Button("Feed", on_click=feed)
     pet_button = ft.Button("Pet", on_click=pet)
+
+    def highlight():
+        if hunger.bar.value < 0.5 and hunger.bar.value > 0.3:
+            hunger.bar.color = ft.Colors.ORANGE
+        elif hunger.bar.value <= 0.3:
+            hunger.bar.color = ft.Colors.RED
+        else:
+            hunger.bar.color = ft.Colors.GREEN
+
+        if emotions.bar.value < 0.5 and emotions.bar.value > 0.3:
+            emotions.bar.color = ft.Colors.ORANGE
+        elif emotions.bar.value <= 0.3:
+            emotions.bar.color = ft.Colors.RED
+        else:
+            emotions.bar.color = ft.Colors.GREEN
+        page.update()
 
     def healthbar():
         if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
@@ -112,7 +140,10 @@ async def main(page: ft.Page):
 
     def tiredness():
         nonlocal hunger_multiplier, emotions_multiplier
-        if energy.bar.value <= 0.4:
+        if sleeping:
+            hunger_multiplier = 0.75
+            emotions_multiplier = 0.75
+        elif energy.bar.value <= 0.4:
             hunger_multiplier = 3
             emotions_multiplier = 3
         else:
@@ -136,7 +167,6 @@ async def main(page: ft.Page):
             fit=ft.BoxFit.CONTAIN,
             filter_quality=ft.FilterQuality.NONE
         )
-    
     page.add(
         currentageText,
         blebot,
@@ -169,8 +199,10 @@ async def main(page: ft.Page):
         level_up()
         page.update()
         tiredness()
+        wake_up()
         healthbar()
         current_blebot()
+        highlight()
         if sleeping:
             energy.bar.value = min(energy.bar.value + 0.02, 1)
         else:
