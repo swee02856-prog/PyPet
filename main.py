@@ -45,6 +45,7 @@ async def main(page: ft.Page):
     emotions = bar("Emotions", 0.5)
     energy = bar("Energy", 0.5)
     experience = bar("Experience", 0)
+    health = bar("BleBot Health", 1)
 
     async def bob():
         while True:
@@ -68,6 +69,13 @@ async def main(page: ft.Page):
     hunger_button = ft.Button("Feed", on_click=feed)
     pet_button = ft.Button("Pet", on_click=pet)
 
+
+    def healthbar():
+        if hunger.bar.value > 0.8 and emotions.bar.value > 0.8:
+            print("Gaining health")
+            health.bar.value = min(health.bar.value + 0.01, 1)
+        elif hunger.bar.value < 0.1 and emotions.bar.value < 0.1:
+            health.bar.value = max(health.bar.value - 0.01, 0)
     def gain_exp():
         print("Gaining exp")
         if current_age != ages[2]:
@@ -132,7 +140,9 @@ async def main(page: ft.Page):
         energy.bar,
         sleepbutton,
         experience.bar,
-        ft.Text(experience.label)
+        ft.Text(experience.label),
+        health.bar,
+        ft.Text(health.label)
         )
     if current_age == ages[0]:
         age_baby()
@@ -149,6 +159,7 @@ async def main(page: ft.Page):
         level_up()
         page.update()
         tiredness()
+        healthbar()
         if sleeping:
             energy.bar.value = min(energy.bar.value + 0.02, 1)
         else:
